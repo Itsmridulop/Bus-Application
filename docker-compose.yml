@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  buss-admin:
+    build:
+      context: ./buss-admin
+    image: mridul30/buss-admin:latest
+    container_name: buss-admin
+    depends_on:
+      - buss-api
+    ports:
+      - "80:80"
+    networks:
+      - buss-nw
+    env_file:
+      - "./buss-admin/.env"
+
+  buss-api:
+    build:
+      context: ./buss-api
+    image: mridul30/buss-api:latest
+    container_name: buss-api
+    ports:
+      - "8080:8080"
+    networks:
+      - buss-nw
+    env_file:
+      - "./buss-api/src/.env"
+
+networks:
+  buss-nw:
+    driver: bridge
