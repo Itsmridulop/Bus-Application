@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bus-app-frontend
+  namespace: bus-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: bus-app-frontend
+  template:
+    metadata:
+      labels:
+        app: bus-app-frontend
+    spec:
+      containers:
+        - name: bus-app-frontend
+          image: mridul30/buss-admin:latest
+          ports:
+            - containerPort: 80
+          resources:
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+          env:
+            - name: VITE_GOOGLE_MAP_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bus-app-secret
+                  key: VITE_GOOGLE_MAP_API_KEY

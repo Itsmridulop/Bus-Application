@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: bus-app-configmap
+  namespace: bus-app
+data:
+  DATABASE_LOCAL: "mongodb://localhost:27017/buss"
+  JWT_COOKIE_EXPIRES_IN: "7"
+  JWT_EXPIRE: 7d
+  PORT: "8080"

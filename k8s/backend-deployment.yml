@@ -1,0 +1,99 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: bus-app-backend
+  namespace: bus-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      name: backend-pod
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: bus-app-backend
+          image: mridul30/buss-api:latest
+          ports:
+            - containerPort: 8080
+          resources:
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+          env:
+            - name: DATABASE_LOCAL
+              valueFrom:
+                configMapKeyRef:
+                  name: bus-app-configmap
+                  key: DATABASE_LOCAL
+            - name: JWT_COOKIE_EXPIRES_IN
+              valueFrom:
+                configMapKeyRef:
+                  name: bus-app-configmap
+                  key: JWT_COOKIE_EXPIRES_IN
+            - name: JWT_EXPIRE
+              valueFrom:
+                configMapKeyRef:
+                  name: bus-app-configmap
+                  key: JWT_EXPIRE
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: bus-app-configmap
+                  key: PORT
+            - name: DATABASE_REMOTE
+              valueFrom:
+                secretKeyRef:
+                  name: bus-app-secret
+                  key: DATABASE_REMOTE
+            - name: DATABASE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bus-app-secret
+                  key: DATABASE_PASSWORD
+            - name: CLOUDINARY_CLOUD_NAME
+              valueFrom:
+                secretKeyRef:
+                  name: bus-app-secret
+                  key: CLOUDINARY_CLOUD_NAME
+            - name: CLOUDINARY_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: bus-app-secret
+                  key: CLOUDINARY_API_KEY
+            - name: CLOUDINARY_API_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bus-app-secret
+                  key: CLOUDINARY_API_SECRET
+            - name: SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: bus-app-secret
+                  key: SECRET
+            - name: EMAIL_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: bus-app-secret
+                  key: EMAIL_HOST
+            - name: EMAIL_PORT
+              valueFrom:
+                secretKeyRef:
+                  name: bus-app-secret
+                  key: EMAIL_PORT
+            - name: EMAIL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: bus-app-secret
+                  key: EMAIL_PASSWORD
+            - name: EMAIL
+              valueFrom:
+                secretKeyRef:
+                  name: bus-app-secret
+                  key: EMAIL
