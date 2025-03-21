@@ -6,7 +6,8 @@ interface UserType {
   photo: string;
   route: string | null;
   stop: string | null;
-  role: "student" | "driver" | "admin";
+  school: string | null;
+  role: "student" | "driver" | "admin" | "super-admin";
   password: string;
   passwordConfirm?: string; // Made optional to handle the case after validation
   isActive: boolean;
@@ -38,6 +39,7 @@ interface RouteType {
   stops: string[]; // Stops are now objects with a 'value' field
   status: "arrival" | "return";
   user?: string;
+  school: string;
 }
 
 interface StopType {
@@ -46,7 +48,19 @@ interface StopType {
   latitude: number;
   longitude: number;
   address: string;
+  school?: string;
   user?: string;
 }
 
-export { LocationType, RouteType, StopType, UserType };
+interface SchoolType {
+  _id: string;
+  name: string;
+  address: string;
+  phone: string;
+  email: string;
+  logo: string;
+  schoolCode: string;
+  isActive?: boolean;
+}
+
+export { LocationType, RouteType, StopType, SchoolType, UserType };

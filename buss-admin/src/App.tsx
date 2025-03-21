@@ -16,6 +16,8 @@ import { useMemo } from "react";
 import RouteManagement from "./features/route/RouteManagement";
 import StopManagement from "./features/stop/StopManagement";
 import UserManagement from "./features/user/UserManagement";
+import TestSocket from "./components/TestSocket";
+import SchoolManagement from "./features/school/SchoolManagement";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +33,10 @@ const router = createBrowserRouter([
         element: <div className="h-screen">Home</div>,
       },
     ],
+  },
+  {
+    path: "/test",
+    element: <TestSocket />,
   },
   {
     path: "dashboard",
@@ -63,6 +69,10 @@ const router = createBrowserRouter([
       {
         path: "stop",
         element: <StopManagement />,
+      },
+      {
+        path: "school",
+        element: <SchoolManagement />,
       },
       {
         path: "map",

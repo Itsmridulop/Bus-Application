@@ -4,38 +4,42 @@ import { useDialog } from "@/context/DialogContext";
 import { SchoolType, UserType } from "@/types";
 import { CustomDialog } from "@/components/CustomDialog";
 import RichTable from "@/components/RichTable";
-import { UserForm } from "./UserForm";
-import { useCreteUser, useDeleteUser, useUpdateUser } from "./user.hook";
+import { SchoolForm } from "./SchoolForm";
+import {
+  useCreateSchool,
+  useDeleteSchool,
+  useUpdateSchool,
+} from "./school.hook";
 import { BackdropLoader } from "@/components/BackdropLoader";
 
-const UserManagement: FC = () => {
+const SchoolManagement: FC = () => {
   const { openDeleteDialog } = useDialog();
 
-  const { data: users, isLoading } = useQuery<UserType[]>({
-    queryKey: ["user"],
-  });
-  const { data: school } = useQuery<SchoolType>({
+  const { data: schools, isLoading } = useQuery<SchoolType[]>({
     queryKey: ["schools"],
   });
-  const { createUser } = useCreteUser();
-  const { updateUser } = useUpdateUser();
-  const { deleteUser } = useDeleteUser();
+  const { data: currentUser, isLoading: isUserLoading } = useQuery<UserType>({
+    queryKey: ["auth"],
+  });
+  const { createSchool } = useCreateSchool();
+  const { updateSchool } = useUpdateSchool();
+  const { deleteSchool } = useDeleteSchool();
 
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [activeEditElement, setActiveEditElement] = useState<UserType | null>(
+  const [activeEditElement, setActiveEditElement] = useState<SchoolType | null>(
     null,
   );
 
   const handleDelete = (id: string) => {
-    deleteUser(id);
+    deleteSchool(id);
   };
 
   // used to edit the routes
   const handleEdit = (id: string) => {
     setEditDialogOpen(true);
-    const user = users?.find((user) => user._id === id);
-    if (user) {
-      setActiveEditElement(user);
+    const school = schools?.find((school) => school._id === id);
+    if (school) {
+      setActiveEditElement(school);
     }
   };
 
@@ -46,37 +50,42 @@ const UserManagement: FC = () => {
   };
 
   // final submit function for the form
-  const handleSubmit = (body: Partial<UserType>) => {
+  const handleSubmit = (body: Partial<SchoolType>) => {
     if (body._id) {
-      const data = updateUser(body);
+      const data = updateSchool(body);
       console.log(data);
     } else {
-      const data = createUser({ ...body, school: school?._id });
+      const data = createSchool(body);
       console.log(data);
     }
   };
 
-  if (!users) return <BackdropLoader isLoading={isLoading} />;
+  if (!schools)
+    return <BackdropLoader isLoading={isLoading || isUserLoading} />;
 
   // this is used to filter the record to show in the table
-  const filteredData = users.map((el, i) => ({
+
+  if (currentUser?.role === "admin") return null;
+
+  const filteredData = schools.map((el, i) => ({
     sno: i + 1,
     id: el._id,
     name: el.name,
     email: el.email,
-    role: el.role,
+    schoolCode: el.schoolCode,
     phone: el.phone,
+    logo: el.logo,
+    address: el.address,
+    isActive: el.isActive,
   }));
 
   const mapping = [
     { label: "SNO.", field: "sno" },
     { label: "Name", field: "name" },
+    { label: "School Code", field: "schoolCode" },
     { label: "Email", field: "email" },
-    { label: "Role", field: "role" },
     { label: "Phone", field: "phone" },
   ];
-
-  if (isLoading) return <BackdropLoader isLoading={isLoading} />;
 
   return (
     <div className="flex flex-col gap-10">
@@ -86,7 +95,7 @@ const UserManagement: FC = () => {
         label="Edit Routes"
         onOpenChange={setEditDialogOpen}
       >
-        <UserForm
+        <SchoolForm
           defaultValues={activeEditElement}
           onSubmit={handleSubmit}
           isUpdateMode={true}
@@ -97,11 +106,11 @@ const UserManagement: FC = () => {
         initialData={filteredData}
         mapping={mapping}
         onDelete={(id) => openDeleteDialog(() => handleDelete(id))}
-        label="User List"
+        label="School  List"
         onEdit={handleEdit}
       />
     </div>
   );
 };
 
-export default UserManagement;
+export default SchoolManagement;
